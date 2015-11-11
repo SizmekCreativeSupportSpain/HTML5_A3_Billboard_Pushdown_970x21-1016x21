@@ -1,0 +1,159 @@
+<!doctype html> 
+<html> 
+<head> 
+<meta charset="utf-8"/> 
+<meta name="viewport" content="width=device-width, initial-scale=1"/> 
+<title>A3 Billboard: 970x21 to 1016x221</title>
+<link rel="stylesheet" href="style.css"/>
+<script>EBModulesToLoad = ['Video','EBCMD'];</script>
+<script type="text/javascript" src="http://ds.serving-sys.com/BurstingScript/EBLoader.js"></script>
+<script type="text/javascript" src="http://ds.serving-sys.com/BurstingRes/CustomScripts/html5_auto_expand_frequency_capping_v1.js"></script>
+<script type="text/javascript" src="scripts/pushdown_banner.js"></script>
+<script type="text/javascript">
+	var adDiv;
+	var bannerDiv;
+	var expansionDiv;
+	var video;
+	var expandDuration = 500;
+	var collapseDuration = expandDuration;
+	var pushdownSettings = {
+		pushDown: true, 
+		expandDuration: expandDuration || 0, 
+		collapseDuration: collapseDuration || 0 
+	};
+	var isAndroid4_0andFirstCollapse = (/android 4\.0/i).test(navigator.userAgent);
+
+	function initEB(){
+		if (!EB.isInitialized()) {
+			EB.addEventListener(EBG.EventName.EB_INITIALIZED, startAd);
+		} else {
+			startAd();
+		}
+	}
+
+	function startAd(){
+		EB.initExpansionParams(23,0,1016,221);
+		EB._sendMessage("resizecontainer", pushdownSettings);
+		adDiv = document.getElementById("ad");
+		bannerDiv = document.getElementById("banner");
+		expansionDiv = document.getElementById("expansion");
+		video = document.getElementById("video");
+		bannerDiv.style.visibility = "visible";
+		setUpAutoExpandFrequencyCapping();
+		initVideo();
+	}
+
+	function setUpAutoExpandFrequencyCapping() {
+		var autoExpandSettings = {
+			isEnabled: true,
+			frequency: EB.autoExpandFrequencyCapping.Frequencies.NEVER,
+			expansionsPerPeriod: 0,
+			timeUntilAutoCollapse: 0
+		};
+		var beforeAutoExpandSubscription = new EB.autoExpandFrequencyCapping.EventSubscription({
+			eventName: EB.autoExpandFrequencyCapping.Events.AUTO_EXPAND, 
+			callback: switchToExpandedGraphics, 
+			callbackBinding: this, 
+			timing: EB.autoExpandFrequencyCapping.EventTiming.BEFORE
+		});
+		var afterAutoCollapseSubscription = new EB.autoExpandFrequencyCapping.EventSubscription({
+			eventName: EB.autoExpandFrequencyCapping.Events.AUTO_COLLAPSE, 
+			callback: doCollapseBehavior, 
+			callbackBinding: this, 
+			timing: EB.autoExpandFrequencyCapping.EventTiming.AFTER
+		});
+
+		EB.autoExpandFrequencyCapping.subscribeToEvent(beforeAutoExpandSubscription);
+		EB.autoExpandFrequencyCapping.subscribeToEvent(afterAutoCollapseSubscription);
+		EB.autoExpandFrequencyCapping.initialize(autoExpandSettings);
+	}
+
+	function expand(){
+		switchToExpandedGraphics();
+		EB.expand();
+	}
+
+	function switchToExpandedGraphics() {
+		expansionDiv.style.visibility = "visible";
+		removeClass(adDiv, "collapsed");
+		setClass(adDiv, "expanded");
+		video.style.display = "block";
+	}
+
+	function collapse(){
+		EB.collapse();
+		EB.autoExpandFrequencyCapping.cancelAutoCollapse();
+		doCollapseBehavior();
+	}
+
+	function doCollapseBehavior() {
+		if (!window.hasOwnProperty("collapseDuration") || collapseDuration <= 0) {
+			switchToCollapsedGraphics();
+		} else {
+			setTimeout(switchToCollapsedGraphics, collapseDuration + 100);
+		}
+		
+		video.pause();
+
+		// some Android 4.0 devices crash when hiding the video element during the first collapse
+		if (!isAndroid4_0andFirstCollapse) {
+			video.style.display = "none";
+			isAndroid4_0andFirstCollapse = false;
+		}
+	}
+
+	function switchToCollapsedGraphics() {
+		expansionDiv.style.visibility = "hidden";
+		removeClass(adDiv, "expanded");
+		setClass(adDiv, "collapsed");
+	}
+
+	function initVideo() {
+		var videoTrackingModule = new EBG.VideoModule(video);
+	}
+	
+	function handleExpandButtonClick() {
+		expand();
+	}
+
+	function handleCloseButtonClick() {
+		collapse();
+	}
+
+	function handleClickthroughButtonClick() {
+		video.pause();
+		EB.clickthrough();
+	}
+	
+	function handleUserActionButtonClick() {
+		EB.userActionCounter("CustomInteraction");
+	}
+
+</script>
+
+</head> 
+<body onload="initEB();">
+	<div id="container">
+		<div id="ad" class="collapsed">
+			<div id="banner" style="cursor:pointer;">
+				<img src="images/backup.jpg" alt="" onclick="javascript:handleExpandButtonClick();">
+			</div>
+			<div id="expansion">
+				<button id="closeButton" class="button close" onclick="javascript:handleCloseButtonClick();">X|CERRAR</button>
+				<div id="videoContainer" class="video-container centered">
+					<video id="video" controls poster="images/poster.jpg">
+						<source src="videos/video.mp4" type="video/mp4">
+						<source src="videos/video.webm" type="video/webm">
+						Your browser does not support the <code>video</code> element.
+					</video>
+				</div>
+				<div class="buttons">
+					<button id="userActionButton" class="button useraction" onclick="javascript:handleUserActionButtonClick();">UserAction</button>
+					<button id="clickthroughButton" class="button clickthrough" onclick="javascript:handleClickthroughButtonClick();">ClickThrough</button>
+				</div>
+				<img src="images/expandido.jpg" alt="">
+			</div>
+		</div>
+	</div>
+</body> 
+</html>
