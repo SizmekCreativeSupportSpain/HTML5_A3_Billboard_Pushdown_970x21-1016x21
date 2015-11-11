@@ -1,0 +1,103 @@
+
+body{
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  font-family: Arial, sans-serif;
+}
+
+#container{
+  position: absolute;
+  display: block;
+  width: 1016px;
+  height: 221px;
+}
+
+#ad{
+   position: relative;
+   display: block;
+   overflow: hidden;
+   margin: 0 auto;
+   -webkit-user-select: none;
+    -khtml-user-select: none;
+      -moz-user-select: -moz-none;
+       -ms-user-select: none;
+           user-select: none;
+}
+
+#ad.collapsed{
+  width: 970px;
+  height: 21px;
+}
+
+#ad.expanded{
+  width: 1016px;
+  height: 221px;
+}
+
+#banner{
+  position:absolute;
+  display: block;
+  width: 970px;
+  height: 21px;
+  overflow: hidden;
+}
+
+#expansion{
+  position:absolute;
+  width: 1016px;
+  height: 221px;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+
+button {
+  background-color: #0068FF;
+  border: none;
+  color: #FFF;
+  cursor: pointer;
+  font-size: 10px;
+  height: 14px;
+  width: 108px;
+  outline: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  user-select: none;
+}
+
+button:hover, button:active {
+  color: #FAF000;
+}
+
+.buttons {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.close{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 74px;
+}
+
+.video-container {
+  position: absolute;
+  width: 320px;
+  height: 180px;
+}
+
+video {
+  height: 100%;
+  width: 100%;
+}
+
+.centered {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
